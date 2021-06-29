@@ -106,6 +106,8 @@ public class FoodController {
     void doSimula(ActionEvent event) {
     	txtResult.clear();
     	txtResult.appendText("Simulazione...");
+    	
+    	
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
