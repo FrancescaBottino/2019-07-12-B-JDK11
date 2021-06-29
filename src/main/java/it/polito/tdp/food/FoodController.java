@@ -5,8 +5,11 @@
 package it.polito.tdp.food;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.food.model.CiboEGrassi;
+import it.polito.tdp.food.model.Food;
 import it.polito.tdp.food.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,7 +44,7 @@ public class FoodController {
     private Button btnSimula; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxFood"
-    private ComboBox<?> boxFood; // Value injected by FXMLLoader
+    private ComboBox<Food> boxFood; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
@@ -49,13 +52,54 @@ public class FoodController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Creazione grafo...");
+    	txtResult.appendText("Creazione grafo...\n");
+    	boxFood.getItems().clear();
+    	
+    	int n;
+    	
+    	try {
+    		n = Integer.parseInt(txtPorzioni.getText());
+    	}catch(NumberFormatException e) {
+    		
+    		txtResult.appendText("Devi inserire un numero intero");
+    		return;
+    	}
+    	
+    	
+    	model.creaGrafo(n);
+    	
+    	if(model.getGrafo()==null) {
+    		txtResult.setText("Errore: grafo non creato");
+    		return;
+    	}
+    	else {
+    		
+    		txtResult.appendText("Grafo creato."+"\nNumero di vertici: "+model.getNVertici()+"\nNumero di archi: "+model.getNArchi());
+    	}
+    	
+    	boxFood.getItems().addAll(model.getVertici(n));
+    	
     }
 
     @FXML
     void doGrassi(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Analisi grassi...");
+    	txtResult.appendText("Analisi grassi...\n");
+    	
+    	Food inizio = boxFood.getValue();
+    	
+    	if(inizio == null) {
+    		txtResult.appendText("Devi selezionare il cibo");
+    		return;
+    	}
+    	
+    	List<CiboEGrassi> result = model.getCibiPocoGrassi(inizio);
+    	
+    	for(CiboEGrassi cg : result) {
+    		txtResult.appendText(cg.getF()+" - "+cg.getGrassi()+"\n");
+    	}
+    	
+    	
     }
 
     @FXML
@@ -77,5 +121,7 @@ public class FoodController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	
+    	
     }
 }
